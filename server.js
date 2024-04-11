@@ -13,18 +13,22 @@
 // console.log(st)
 const express = require('express')
 const db = require('./db.js')
-
 const MenuItem = require('./models/MenuItem.js')
 const bodyParser = require('body-parser')
+const personRoute = require('./routes/personRouter');
+const menuRoute = require('./routes/menuRouter');
+require('dotenv').config();
+
+
 const app = express();
 
 app.use(bodyParser.json());//req.body
 
 console.log('Hiii bro!!!')
 
-const personRoute = require('./routes/personRouter');
 app.use('/person',personRoute);
-const menuRoute = require('./routes/menuRouter');
+
+const PORT = process.env.PORT||3000;
 app.use('/menu',menuRoute);
 app.get('/first',(req,res)=>{
     const sde = {
@@ -47,4 +51,4 @@ app.get('/first',(req,res)=>{
     res.send(employee)
 })
 //comment added for testing purpose
-app.listen(3000,()=>{console.log('server is listening on localhost 3000')})
+app.listen(PORT,()=>{console.log('server is listening on cloud server')})
