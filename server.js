@@ -23,12 +23,17 @@ require('dotenv').config();
 const app = express();
 
 app.use(bodyParser.json());//req.body
-
+const logRequest = (req,res,next)=>{
+    console.log(`[${new Date()}] Request made to : ${req.originalUrl}`);
+    next();
+}
+app.use(logRequest)
 console.log('Hiii bro!!!')
 
 app.use('/person',personRoute);
 
 const PORT = process.env.PORT||3000;
+
 app.use('/menu',menuRoute);
 app.get('/first',(req,res)=>{
     const sde = {
