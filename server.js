@@ -18,24 +18,57 @@ const bodyParser = require('body-parser')
 const personRoute = require('./routes/personRouter');
 const menuRoute = require('./routes/menuRouter');
 require('dotenv').config();
+const passport = require('passport');
+const LocalStrategy = require('passport-local').Strategy;
+const Person = require('./models/person.js');
 
 
 const app = express();
-
 app.use(bodyParser.json());//req.body
+const PORT = process.env.PORT||3000;
+
 const logRequest = (req,res,next)=>{
     console.log(`[${new Date()}] Request made to : ${req.originalUrl}`);
     next();
 }
 app.use(logRequest)
+
+passport.use(new LocalStrategy(async(username,password,done)=>{
+    //authentication logic here
+    try {
+        console.log('Received credendials:',username,password);
+        const user = await Person.findOne({username:username});
+        if(!user){
+            return done(null,false,{message:'Incorrect username'});
+        }
+        
+        const isPasswordMatch = user.password===password?true:false;
+        if (isPasswordMatch){
+            
+            return done(null,user);
+        }
+        else{
+            
+            return done(null,false,{message:"Incorrect password"});
+        }
+        
+    } catch (err) {
+        return done(err);
+    }
+}));
+
+app.use(passport.initialize());
+
+
+
 console.log('Hiii bro!!!')
 
 app.use('/person',personRoute);
 
-const PORT = process.env.PORT||3000;
 
 app.use('/menu',menuRoute);
-app.get('/first',(req,res)=>{
+const localAuthMiddleware = passport.authenticate('local',{session:false});
+app.get('/first',localAuthMiddleware,(req,res)=>{
     const sde = {
         'fronteEnd':'UI',
         'backEnd':'NodeJS',
