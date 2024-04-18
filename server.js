@@ -39,12 +39,12 @@ const localAuthMiddleware = passport.authenticate('local',{session:false});
 
 console.log('Hiii bro!!!')
 
-app.use('/person',localAuthMiddleware,personRoute);
+app.use('/person',personRoute);
 
 
-app.use('/menu',localAuthMiddleware,menuRoute);
+app.use('/menu',menuRoute);
 
-app.get('/first',localAuthMiddleware,(req,res)=>{
+app.get('/first',(req,res)=>{
     const sde = {
         'fronteEnd':'UI',
         'backEnd':'NodeJS',

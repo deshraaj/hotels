@@ -2,6 +2,7 @@
 const person = require('./../models/person.js')
 const express = require('express');
 const router = express.Router();
+const {jwtAuthMiddleware,generatetoken} = require('./../jwt');
 
 
 
@@ -40,7 +41,7 @@ router.get('/:workType',async(req,res)=>{
 
 
 
-router .post('/',async(req,res)=>{
+router .post('/signup',async(req,res)=>{
     try {
         const data = req.body; //Assuming the request body conatians the person data
 
@@ -48,7 +49,13 @@ router .post('/',async(req,res)=>{
         const newPerson = new person(data);
         const response = await newPerson.save()
         console.log('Data saved successfully!!!');
-        res.status(200).json(response);
+        const payload = {
+            id:response.id,
+            username:response.username
+        }
+        const token = generatetoken(payload);
+        console.log('token is : ',token);
+        res.status(200).json({response:response,token:token});
 
     } catch (err) {
         console.log('Something went wrong!!!')
